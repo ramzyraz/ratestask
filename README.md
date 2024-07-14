@@ -121,7 +121,7 @@ You can then run the following command to start your flask application:
 poetry run flask run    
 ```
 
-If you're on Linux or Mac, you can also use `Gunicorn` to start your app:
+If you're on Linux or Mac, you can also use `gunicorn` to start your app:
 
 ```
 poetry run gunicorn --bind 0.0.0.0:5000 app.main:app
