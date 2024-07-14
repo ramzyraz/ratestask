@@ -1,126 +1,91 @@
-# Data definition
+# Rates Task
 
-We are providing you with a small set of simplified real-world data. A
-database dump is provided that includes the following information:
+This project includes my solution for the Xeneta technical task. The project is built with Flask and PostgreSQL, and it uses Poetry for dependency management.
 
-## Ports
+## Project Structure
 
-Information about ports, including:
+The structure of the repository is as follows:
 
-* 5-character port code
-* Port name
-* Slug describing which region the port belongs to
+```plaintext
+ratestask/
+│
+├── app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── queries.py
+│   ├── routes.py
+│   ├── config.py
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   ├── validators.py
+│   │   └── helpers.py
+│   └── services/
+│       ├── __init__.py
+│       └── rates_service.py
+│
+├── tests/
+│   ├── __init__.py
+│   ├── conftest.py
+│   ├── test_rates_api.py
+│   ├── test_setup.py
+│   └── test_validators.py
+│
+├── rates.sql
+├── Dockerfile
+├── Dockerfile.flask
+├── docker-compose.yml
+├── pyproject.toml
+├── poetry.lock
+└── README.md
+```
 
-## Regions
+## Setup
 
-A hierarchy of regions, including:
+There are generally two ways you can access the application:
 
-* Slug - a machine-readable form of the region name
-* The name of the region
-* Slug describing which parent region the region belongs to
+### Docker Compose
 
-Note that a region can have both ports and regions as children, and the region
-tree does not have a fixed depth.
+1. Clone the repository and go inside the `ratetask` folder:
 
-## Prices
+```
+git clone https://github.com/yourusername/ratestask.git && cd ratestask
+```
 
-Individual daily prices between ports, in USD.
+2. Next up, run the following command:
 
-* 5-character origin port code
-* 5-character destination port code
-* The day for which the price is valid
-* The price in USD
+```
+docker-compose up --build
+```
 
-# Assignment: HTTP-based API
+This basically will:
 
-Develop an [HTTP-based API](#task-1-http-based-api) capable of handling the GET request described below. Our stack is based on Flask, but you are free to choose any Python framework you like. All data returned is expected to be in JSON format. Please demonstrate your knowledge of SQL (as opposed to using ORM querying tools).
+* Build the Flask app image, starting the server on port 5000
+* Build the PostgreSQL image and initialize the database with `rates.sql` on port 5432
+* Run all the tests associated with the API
 
+You can then access the flask server through the `http://127.0.0.1:5000` or `http://0.0.0.0:5000` url.
 
-Implement an API endpoint that takes the following parameters:
+### Without Docker Compose
 
-* date_from
-* date_to
-* origin
-* destination
+For this, we would first need to setup our database and then run the flask application manually.
 
-and returns a list with the average prices for each day on a route between port codes *origin* and *destination*. Return an empty value (JSON null) for days on which there are less than 3 prices in total.
+---
 
-Both the *origin, destination* params accept either port codes or region slugs, making it possible to query for average prices per day between geographic groups of ports.
+#### Database setup:
 
-    curl "http://127.0.0.1/rates?date_from=2016-01-01&date_to=2016-01-10&origin=CNSGH&destination=north_europe_main"
-
-    [
-        {
-            "day": "2016-01-01",
-            "average_price": 1112
-        },
-        {
-            "day": "2016-01-02",
-            "average_price": 1112
-        },
-        {
-            "day": "2016-01-03",
-            "average_price": null
-        },
-        ...
-    ]
-
-# Requirements
-
-* Write the solution using Python and SQL, you can use an ORM but please
-  demonstrate some raw SQL
-
-* Keep your solution in a Version Control System of your
-  choice. *Provide the solution as a public repository that can be
-  easily cloned by our development team.*
-
-* Provide any instructions needed to set up the system in `README.md`.
-
-* Ensure the API handles errors and edge cases properly.
-
-* Use dates in YYYY-MM-DD format for the API. There is no need for more
-  complicated date processing.
-
-# Extra details
-
-* It usually takes 2 - 6 hours to complete this task for a developer with 2+ years of experience in building APIs with Python and SQL.
-
-* Our key evaluation criteria:
-    - Ease of setup and testing
-    - Code clarity and simplicity
-    - Comments where appropriate
-    - Code organisation
-    - Tests
-
-* You are encouraged to modify or extend the database schema if you think a different model fits the task better.
-
-* If you have any questions, please don't hesitate to contact us
-
-* Please let us know how much time you spent on the task, and of any difficulties that you ran into.
-
-
-# Initial setup
-
-We have provided a simple Docker setup for you, which will start a
-PostgreSQL instance populated with the assignment data. You don't have
-to use it, but you might find it convenient. If you decide to use
-something else, make sure to include instructions on how to set it up.
-
-You can execute the provided Dockerfile by running:
+We can use the provided Dockerfile to start the PostgreSQL instance populated with the assignment data. You can execute the provided Dockerfile by running:
 
 ```bash
 docker build -t ratestask .
 ```
 
-This will create a container with the name *ratestask*, which you can
-start in the following way:
+This will create a container with the name *ratestask*, which you can start in the following way:
 
 ```bash
 docker run -p 0.0.0.0:5432:5432 --name ratestask ratestask
 ```
 
-You can connect to the exposed Postgres instance on the Docker host IP address,
-usually *127.0.0.1* or *172.17.0.1*. It is started with the default user `postgres` and `ratestask` password.
+You can connect to the exposed Postgres instance on the Docker host IP address, usually *127.0.0.1* or *172.17.0.1*. It is started with the default user `postgres` and `ratestask` password.
 
 ```bash
 PGPASSWORD=ratestask psql -h 127.0.0.1 -U postgres
@@ -132,6 +97,44 @@ alternatively, use `docker exec` if you do not have `psql` installed:
 docker exec -e PGPASSWORD=ratestask -it ratestask psql -U postgres
 ```
 
-Keep in mind that any data written in the Docker container will
-disappear when it shuts down. The next time you run it, it will start
-with a clean state.
+Keep in mind that any data written in the Docker container will disappear when it shuts down. The next time you run it, it will start with a clean state.
+
+---
+
+#### Application Setup:
+
+To setup your application, you need to first have `poetry` installed. If it isn't, you can do so by running the follwoing command:
+
+```
+pip install poetry
+```
+
+Next, we need to install all our dependencies:
+
+```
+poetry install
+```
+
+You can then run the following command to start your flask application:
+
+```
+poetry run flask run    
+```
+
+If you're on Linux or Mac, you can also use `Gunicorn` to start your app:
+
+```
+poetry run gunicorn --bind 0.0.0.0:5000 app.main:app
+```
+
+You can now access the application through the following url:
+
+```
+http://0.0.0.0:5000/
+```
+
+You can also execute the following command to run the tests:
+
+```
+pytest
+```
