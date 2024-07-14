@@ -36,13 +36,16 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
+    # Establishes the database connection before each request
     @app.before_request
     def before_request():
         g.db = connect_db(app.logger)
 
+    # Closes the database connection after each request
     @app.teardown_appcontext
     def teardown_db(exception):
         close_db()
 
+    # Blueprint registeration
     app.register_blueprint(routes)
     return app
