@@ -11,7 +11,6 @@ def get_all_child_slugs(conn, parent_slug):
                 cursor.execute(GET_CHILD_SLUGS, (slug,))
                 results = cursor.fetchall()
 
-                # Recursively fetch all child slugs 
                 for result in results:
                     child_slugs.append(result[0])
                     fetch_child_slugs(result[0])
