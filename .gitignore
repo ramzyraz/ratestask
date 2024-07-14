@@ -1,0 +1,11 @@
+# Python specific
+__pycache__/
+.pytest_cache
+
+# Virtual environments
+.env
+.venv/
+venv/
+
+# VS Code
+.vscode
