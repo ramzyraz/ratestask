@@ -1,8 +1,7 @@
 from datetime import datetime
-from flask import jsonify
 
 def validate_params(date_from, date_to, origin, destination):
-    # If all params missing, return error
+    # If any one of the params missing, return error
     if not all([date_from, date_to, origin, destination]):
         return jsonify({"error": "Missing required parameters"}), 400
 
@@ -16,5 +15,9 @@ def validate_params(date_from, date_to, origin, destination):
     except ValueError:
         return jsonify({"error": "Invalid date format"}), 400
 
-    # If no errors, simply return None
-    return None
+    
+    return date_from, date_to
+
+# Port code validation function (assuming each code is of 5 length)
+def is_valid_port_code(code): return len(code) == 5
+
