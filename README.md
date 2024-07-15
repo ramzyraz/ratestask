@@ -45,7 +45,7 @@ There are generally two ways you can access the application:
 
 ### Docker Compose
 
-1. Clone the repository and go inside the `ratetask` folder:
+1. Clone the repository and go inside the `ratestask` folder:
 
 ```
 git clone https://github.com/yourusername/ratestask.git && cd ratestask
