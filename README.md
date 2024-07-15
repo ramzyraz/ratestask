@@ -48,7 +48,8 @@ There are generally two ways you can access the application:
 1. Clone the repository and go inside the `ratestask` folder:
 
 ```
-git clone https://github.com/ramzyraz/ratestask.git && cd ratestask
+git clone https://github.com/ramzyraz/ratestask.git
+cd ratestask
 ```
 
 2. Next up, run the following command:
